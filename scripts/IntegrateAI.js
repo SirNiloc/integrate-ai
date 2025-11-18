@@ -1,11 +1,11 @@
 Hooks.once('init', () => {
     // Register API Base URL setting
     game.settings.register("integrate-ai", "aiApiBaseUrl", {
-        name: "AI API Base URL",
-        hint: "Set the base URL for the AI API endpoint (e.g., http://localhost:11434/api)",
-        scope: "world",
+        name: "AI API Custom Endpoint",
+        hint: "Set a custom URL for the AI API endpoint (e.g., http://localhost:11434/api/chat)",
+        scope: "client",
         config: true,
-        default: "http://localhost:11434/api",
+        default: "http://localhost:11434/api/chat",
         type: String
     });
 
@@ -13,11 +13,32 @@ Hooks.once('init', () => {
     game.settings.register("integrate-ai", "aiModel", {
         name: "AI Model",
         hint: "Select the AI model to use for processing",
-        scope: "world",
+        scope: "client",
         config: true,
         default: 'gemma3',
         type: String
     });
+
+    game.settings.register("integrate-ai", "api-key", {
+        name: "API Key",
+        hint: "Select the AI model to use for processing",
+        scope: "client",
+        config: true,
+        default: '************************',
+        type: String
+    });
+
+    game.settings.register("integrate-ai", "ai-provider", {
+        name: "AI Endpoint",
+        hint: "Select the AI endpoint",
+        scope: "client",
+        config: true,
+        default: '',
+        type: String,
+        choices: ["Custom", "Ollama Local", "OpenAI"]
+
+    });
+
 });
 
 // Module registration
@@ -31,52 +52,59 @@ class IntegrateAI {
         console.log('Integrate AI Module initialized');
     }
 
-    // Function to get the API base URL
-    static getAIAPiBaseUrl() {
-        return game.settings.get("integrate-ai", "aiApiBaseUrl");
-    }
 
     // Function to get the AI model
     static getModel() {
         return game.settings.get("integrate-ai", "aiModel");
     }
 
+    static async getHeaders() {
+        var apiKey = game.settings.get("integrate-ai", "api-key");
+        if (apiKey != null && apiKey !== "") {
+            return {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            }
+        }
+
+        return {
+            'Content-Type': 'application/json'
+        }
+    }
+
     // Process content with API
     static async processWithAI(prompt) {
+        return this.chatWithAI([{ role: "user", content: prompt }])
+    }
 
-        try {
-            const response = await fetch(`${IntegrateAI.getAIAPiBaseUrl()}/generate`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    model: await this.getModel(),
-                    prompt: prompt,
-                    stream: false
-                })
-            });
+    static async getChatEndpoint() {
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            return data.response;
-        } catch (error) {
-            console.error('AI API Error:', error);
-            throw error;
+        var ai_provider = await game.settings.get("integrate-ai", "ai-provider")
+        switch (ai_provider) {
+            case "1":
+                //Ollama Local
+                console.log("Prompting Local Ollama Server")
+                return 'http://localhost:11434/api/chat'
+            case "2":
+                //OpenAI
+                console.log("Prompting OpenAI")
+                return `https://api.openai.com/v1/chat/completions`
         }
+        console.log("Prompting Custom AI")
+
+        return game.settings.get("integrate-ai", "aiApiBaseUrl")
+
     }
 
     // Send chat message to API
     static async chatWithAI(messagesArray) {
+
+        var url = await this.getChatEndpoint()
+
         try {
-            const response = await fetch(`${IntegrateAI.getAIAPiBaseUrl()}/chat`, {
+            const response = await fetch(url, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: await this.getHeaders(),
                 body: JSON.stringify({
                     model: await this.getModel(),
                     messages: messagesArray,
@@ -89,17 +117,30 @@ class IntegrateAI {
             }
 
             const data = await response.json();
-            return data.message.content;
+
+            const content_2_return = this.getProviderResponse(data)
+
+            console.log(content_2_return)
+
+            return content_2_return;
         } catch (error) {
-            console.error('AI Chat Error:', error);
+            console.error('AI API Error:', error);
             throw error;
         }
     }
+
+    static async getProviderResponse(data) {
+        var ai_provider = await game.settings.get("integrate-ai", "ai-provider")
+        switch (ai_provider) {
+            case "1":
+                //Ollama Local
+                return data.message.content
+            case "2":
+                //OpenAI
+                return data.choices[0].message.content
+        }
+
+        return data
+    }
 }
-
-
-
-
-
-
 
