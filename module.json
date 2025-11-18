@@ -1,0 +1,30 @@
+{
+  "id": "integrate-ai",
+  "title": "Integrate AI",
+  "version": "1.0.0",
+  "compatibility": {
+    "minimum": "13",
+    "verified": "13"
+  },
+  "authors": [
+    {
+      "name": "SirNiloc",
+      "email": "sirniloc@ravn-quest.com",
+      "url": "www.ravn-quest.com",
+      "discord": "sirniloc",
+      "flags": {}
+    },
+    {
+      "name": "RAVN Quest",
+      "url": "www.ravn-quest.com",
+      "flags": {}
+    }
+  ],
+  "scripts": [
+    "scripts/IntegrateAI.js"
+  ],
+  "flags": {
+    "canUpload": true
+  },
+  "description": "<h2><span style=\"font-family:Arial, sans-serif;line-height:1.6\">Integrate AI Module for Foundry VTT</span></h2><p><span style=\"font-family:Arial, sans-serif;line-height:1.6\"><strong>Accelerate AI integration for your Foundry VTT modules</strong> with our lightweight, developer-friendly <em>Integrate AI</em> module. This module provides a foundation for connecting your modules to local and remote AI APIs, enabling you to build intelligent, dynamic gameplay experiences without the complexity of API setup.</span></p><h3><span style=\"font-family:Arial, sans-serif;line-height:1.6\">Developer-Friendly Features:</span></h3><ul><li><span style=\"font-family:Arial, sans-serif;line-height:1.6\"><strong>Simple API Abstraction:</strong> Clean static methods (<code>processWithAI</code> and <code>chatWithAI</code>) that handle all HTTP communication and JSON parsing for you.</span></li><li><span style=\"font-family:Arial, sans-serif;line-height:1.6\"><strong>Configuration Management:</strong> Built-in settings system with <code>game.settings.register</code> for base URL and model selection, making your module's AI integration configurable by world creators.</span></li><li><span style=\"font-family:Arial, sans-serif;line-height:1.6\"><strong>Modular Design:</strong> Easy-to-use class structure (<code>IntegrateAI</code>) that can be extended or imported into any module with minimal overhead.</span></li><li><span style=\"font-family:Arial, sans-serif;line-height:1.6\"><strong>Error Handling:</strong> Comprehensive error management built-in, with detailed console logging for debugging AI interactions.</span></li><li><span style=\"font-family:Arial, sans-serif;line-height:1.6\"><strong>Flexible Integration:</strong> Works with any AI API that supports the standard generate/chat endpoints (e.g., Ollama, LLaMA.cpp, local models).</span></li></ul><h3><span style=\"font-family:Arial, sans-serif;line-height:1.6\">Quick Integration:</span></h3><p><span style=\"font-family:Arial, sans-serif;line-height:1.6\">Simply import the module and use the provided static methods to connect to your AI backend:</span></p><pre><code>const response = await IntegrateAI.processWithAI(\"Generate a fantasy creature description\");</code></pre><pre><code>const chatResponse = await IntegrateAI.chatWithAI([{ \n\t\t  role: \"user\",\n\t\t  content: \"What is the weather like?\" \n}]);</code></pre><h3><span style=\"font-family:Arial, sans-serif;line-height:1.6\">Perfect for Module Developers:</span></h3><p><span style=\"font-family:Arial, sans-serif;line-height:1.6\">Whether you're building an NPC dialogue system, automated quest generator, or intelligent world-building tool, this module gives you the foundation to seamlessly integrate AI capabilities into your Foundry VTT modules. No more reinventing the wheel – focus on your creative vision, not API complexity.</span></p>"
+}
