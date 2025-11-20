@@ -48,6 +48,8 @@ Hooks.on('init', () => {
 
 class IntegrateAI {
 
+
+
     static async initialize() {
         console.log('Integrate AI Module initialized');
     }
@@ -72,6 +74,17 @@ class IntegrateAI {
         }
     }
 
+    static async stringToAssistantMessage(str) {
+        return { role: "assistant", content: str }
+    }
+    static async stringToSystemMessage(str) {
+        return { role: "system", content: str }
+    }
+    static async stringToUserMessage(str) {
+        var message = { role: "user", content: str }
+        return message
+    }
+
     // Process content with API
     static async processWithAI(prompt) {
         return this.chatWithAI([{ role: "user", content: prompt }])
@@ -83,14 +96,11 @@ class IntegrateAI {
         switch (ai_provider) {
             case "1":
                 //Ollama Local
-                console.log("Prompting Local Ollama Server")
                 return 'http://localhost:11434/api/chat'
             case "2":
                 //OpenAI
-                console.log("Prompting OpenAI")
                 return `https://api.openai.com/v1/chat/completions`
         }
-        console.log("Prompting Custom AI")
 
         return game.settings.get("integrate-ai", "aiApiBaseUrl")
 
@@ -120,7 +130,6 @@ class IntegrateAI {
 
             const content_2_return = this.getProviderResponse(data)
 
-            console.log(content_2_return)
 
             return content_2_return;
         } catch (error) {
@@ -134,13 +143,19 @@ class IntegrateAI {
         switch (ai_provider) {
             case "1":
                 //Ollama Local
-                return data.message.content
+                return data.message
             case "2":
                 //OpenAI
-                return data.choices[0].message.content
+                return data.choices[0].message
         }
 
         return data
+    }
+
+    static async combineUniqueArrays(arr1, arr2) {
+        const combinedArray = [...arr1, ...arr2]; // Use spread syntax to combine arrays
+        const uniqueSet = new Set(combinedArray);       // Use a Set to automatically remove duplicates
+        return Array.from(uniqueSet);                  // Convert the Set back to an array
     }
 }
 
