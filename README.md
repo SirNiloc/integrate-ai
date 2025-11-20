@@ -1,4 +1,5 @@
 ## Integrate AI Module for Foundry VTT
+![GitHub all releases](https://img.shields.io/github/downloads/SirNiloc/integrate-ai/total.svg)
 
 **Accelerate AI integration for your Foundry VTT modules** with the lightweight, developer-friendly *Integrate AI* module. This module provides a foundation for connecting your systems to local and remote AI APIs, enabling you to build intelligent, dynamic gameplay experiences without the complexity of API setup.
 
